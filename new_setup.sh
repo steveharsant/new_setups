@@ -540,6 +540,10 @@ COPYANDCOMPARE applications /home/$UNAME/applications
 COPYANDCOMPARE installers /home/$UNAME/applications/installers
 COPYANDCOMPARE ssh /home/$UNAME/.ssh
 
+#Set Permissions#
+chown $UNNAME home/$UNAME/applications/
+chown $UNNAME home/$UNAME/applications/bomgar_auto_elevation
+
 #Configure Autostart Applications#
 #--------------------------------#
 NEWDIR .config/autostart
