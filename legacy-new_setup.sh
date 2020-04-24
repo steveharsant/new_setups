@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Wow, this is not a great script... Keeping for historical reasons.
+
 clear
 echo "
 #===================================================#
