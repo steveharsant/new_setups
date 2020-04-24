@@ -78,7 +78,7 @@ printf "${INFO} Running apt update\n"
 apt update -qq
 
 printf "${INFO} Running apt upgrade\n"
-apt upgrade -yqq
+apt upgrade -yqq > /dev/null 2>&1
 
 PACKAGES=(arp-scan docker-ce docker-ce-cli code containerd.io git htop keepassxc qemu-kvm remmina speedtest-cli spotify-client syncthing tilda vim virt-manager vlc wine-stable)
 for PACKAGE in "${PACKAGES[@]}"
