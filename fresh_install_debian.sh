@@ -49,16 +49,25 @@ printf "${INFO} Adding external keys and repositories\n"
 # add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /dev/null 2>&1
 
 ## Spotify
-curl -sS https://download.spotify.com/debian/pubkey.gpg | apt-key add -
-echo "deb http://repository.spotify.com stable non-free" > /etc/apt/sources.list.d/spotify.list
+SPOTIFY='/etc/apt/sources.list.d/spotify.list'
+if [[ ! -f ${SPOTIFY} ]]; then
+  curl -sS https://download.spotify.com/debian/pubkey.gpg | apt-key add -
+  echo "deb http://repository.spotify.com stable non-free" > ${SPOTIFY}
+fi
 
 ## VSCode
-curl -sS https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+VSCODE='/etc/apt/sources.list.d/vscode.list'
+if [[ ! -f ${VSCODE} ]]; then
+  curl -sS https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+  echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > ${VSCODE}
+fi
 
 ## Syncthing
-curl -sS https://syncthing.net/release-key.txt | sudo apt-key add -
-echo "deb https://apt.syncthing.net/ syncthing stable" > /etc/apt/sources.list.d/syncthing.list
+SYNCTHING='/etc/apt/sources.list.d/syncthing.list'
+if [[ ! -f ${SYNCTHING} ]]; then
+  curl -sS https://syncthing.net/release-key.txt | sudo apt-key add -
+  echo "deb https://apt.syncthing.net/ syncthing stable" > ${SYNCTHING}
+fi
 
 # Update, Upgrade and Install
 printf "${INFO} Running apt update\n"
