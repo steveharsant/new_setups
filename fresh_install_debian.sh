@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 # Set liniting rules
@@ -14,6 +15,10 @@ FAIL=${RED}'FAIL:'${WHITE} #FAIL MESSAGES
 PASS=${GREEN}'PASS:'${WHITE} #PASS MESSAGES
 INFO=${YELLOW}'INFO:'${WHITE} #INFO MESSAGES
 HINT=${BLUE}'HINT:'${WHITE} #HINT MESSAGES
+
+# Get username and home path. Running with sudo changes the $USER & $HOME variables to root
+USERNAME=$(awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd | head -n 1)
+MYHOME="/home/${USERNAME}"
 
 # Check OS compatibility
 if [[ ! -n $(command -v apt) ]]; then
@@ -34,12 +39,12 @@ if ! nc -zw1 google.com 443; then
 fi
 
 # Configure sudoers file
-if ! grep -qF "${USER} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
-  echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+if ! grep -qF "${USERNAME} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
+  echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 fi
 
 # Configure Nautilis address bar
-sudo -u "${USER}" dconf write /org/gnome/nautilus/preferences/always-use-location-entry true
+sudo -u "${USERNAME}" dconf write /org/gnome/nautilus/preferences/always-use-location-entry true
 
 # Configure external repositories
 printf "${INFO} Adding external keys and repositories\n"
@@ -55,7 +60,7 @@ if [[ ! -f ${SPOTIFY} ]]; then
   echo "deb http://repository.spotify.com stable non-free" > ${SPOTIFY}
 fi
 
-## VSCode
+## VSCodesudo cat
 VSCODE='/etc/apt/sources.list.d/vscode.list'
 if [[ ! -f ${VSCODE} ]]; then
   curl -sS https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
@@ -86,11 +91,11 @@ done
 # Download and install dotfiles
 printf "${INFO} Installing dotfiles\n"
 
-if ! grep -Fq "${HOME}/.bash_customisations" "${HOME}/.bashrc"; then
+if ! grep -Fq "${MYHOME}/.bash_customisations" "${MYHOME}/.bashrc"; then
   printf "${INFO} Updating .bashrc\n"
-  cat >> "${HOME}/.bashrc" << EOH
+  cat >> "${MYHOME}/.bashrc" << EOH
    # Add personal bash customisations, aliases and favourites
-   if [[ -f "${HOME}/.bash_customisations" ]]; then source "${HOME}/.bash_customisations"; fi
+   if [[ -f "${MYHOME}/.bash_customisations" ]]; then source "${MYHOME}/.bash_customisations"; fi
 EOH
 fi
 
@@ -98,7 +103,7 @@ DOTFILES_URL='https://raw.githubusercontent.com/steveharsant/dotfiles/master'
 DOTFILES=(.bash_aliases .bash_customisations .bash_favourites .screenrc .vimrc)
 for FILE in "${DOTFILES[@]}"; do
   printf "${INFO} Downloading latest ${FILE} from github\n"
-  curl -sS "${DOTFILES_URL}/${FILE}" > "${HOME}/${FILE}"
+  curl -sS "${DOTFILES_URL}/${FILE}" > "${MYHOME}/${FILE}"
 done
 
 printf "${HINT} Don't forget to source .bashrc\n"
