@@ -64,7 +64,7 @@ echo "deb https://apt.syncthing.net/ syncthing stable" > /etc/apt/sources.list.d
 printf "${INFO} Running apt update\n"
 apt update -qq
 
-printf "${INFO} Running apt update\n"
+printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq
 
 PACKAGES=(arp-scan docker-ce docker-ce-cli code containerd.io git htop keepassxc qemu-kvm remmina speedtest-cli spotify-client syncthing tilda vim virt-manager vlc wine-stable)
