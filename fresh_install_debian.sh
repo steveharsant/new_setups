@@ -110,8 +110,9 @@ printf "${HINT} Don't forget to source .bashrc\n"
 # Download and install application config files
 printf "${INFO} Installing application config files\n"
 
-TILDA_CONFIG='~/.config/tilda/config_0'
+TILDA_CONFIG="${MYHOME}/.config/tilda/config_0"
 if [[ ! -f ${TILDA_CONFIG} ]]; then
+  mkdir -p "${MYHOME}/.config/tilda/"
   curl -sS https://raw.githubusercontent.com/steveharsant/config_files/master/tilda_config > "${TILDA_CONFIG}"
 fi
 
