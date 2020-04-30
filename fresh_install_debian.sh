@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+#
+# v 1.1.0
+#
 # Set liniting rules
 # shellcheck disable=SC2059
 
@@ -20,7 +22,7 @@ USERNAME=$(awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd 
 MYHOME="/home/${USERNAME}"
 
 # Check OS compatibility
-if [[ ! -n $(command -v apt) ]]; then
+if [[ -z $(command -v apt) ]]; then
   printf "${FAIL} apt package manager not found. Incompatible OS. exiting...\n"
   exit 1
 fi
@@ -48,30 +50,31 @@ sudo -u "${USERNAME}" dconf write /org/gnome/nautilus/preferences/always-use-loc
 # Configure external repositories
 printf "${INFO} Adding external keys and repositories\n"
 
-## Docker - NOTE: Docker installation fails for 20.04. Too new?
-# curl -sSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-# add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /dev/null 2>&1
+declare -A EXTERNAL_REPO
+EXTERNAL_REPO[0,0]='spotify'
+EXTERNAL_REPO[0,1]='https://download.spotify.com/debian/pubkey.gpg'
+EXTERNAL_REPO[0,2]='http://repository.spotify.com stable non-free'
+EXTERNAL_REPO[1,0]='teamviewer'
+EXTERNAL_REPO[1,1]='https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc'
+EXTERNAL_REPO[1,2]='deb http://linux.teamviewer.com/deb stable main'
+EXTERNAL_REPO[2,0]='vscode'
+EXTERNAL_REPO[2,1]='https://packages.microsoft.com/keys/microsoft.asc'
+EXTERNAL_REPO[2,2]='deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+EXTERNAL_REPO[3,0]='syncthing'
+EXTERNAL_REPO[3,1]='https://syncthing.net/release-key.txt'
+EXTERNAL_REPO[3,2]='deb https://apt.syncthing.net/ syncthing stable'
 
-## Spotify
-SPOTIFY='/etc/apt/sources.list.d/spotify.list'
-if [[ ! -f ${SPOTIFY} ]]; then
-  curl -sS https://download.spotify.com/debian/pubkey.gpg | apt-key add -
-  echo "deb http://repository.spotify.com stable non-free" > ${SPOTIFY}
-fi
+n=0
+SOURCES_PATH='/etc/apt/sources.list.d'
 
-## VSCodesudo cat
-VSCODE='/etc/apt/sources.list.d/vscode.list'
-if [[ ! -f ${VSCODE} ]]; then
-  curl -sS https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-  echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > ${VSCODE}
-fi
-
-## Syncthing
-SYNCTHING='/etc/apt/sources.list.d/syncthing.list'
-if [[ ! -f ${SYNCTHING} ]]; then
-  curl -sS https://syncthing.net/release-key.txt | sudo apt-key add -
-  echo "deb https://apt.syncthing.net/ syncthing stable" > ${SYNCTHING}
-fi
+until [[ "${n}" == 4 ]]; do
+  if [[ ! -f "${SOURCES_PATH}/${EXTERNAL_REPO[${n},0]}.list" ]]; then
+    printf "${INFO} Adding ${EXTERNAL_REPO[${n},0]} \n"
+    curl -sS "${EXTERNAL_REPO[${n},1]}" | apt-key add -
+    echo "${EXTERNAL_REPO[${n},3]}" > "${SOURCES_PATH}/${EXTERNAL_REPO[${n},0]}/.list"
+  fi
+  ((n++))
+done
 
 # Update, Upgrade and Install
 printf "${INFO} Running apt update\n"
@@ -80,11 +83,11 @@ apt update -qq
 printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq > /dev/null 2>&1
 
-PACKAGES=(arp-scan docker-ce docker-ce-cli code containerd.io git htop keepassxc qemu-kvm remmina speedtest-cli spotify-client syncthing tilda vim virt-manager vlc wine-stable)
+PACKAGES=(arp-scan cifs-utils code cura git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
 for PACKAGE in "${PACKAGES[@]}"
 do
   printf "${INFO} Installing ${PACKAGE}\n"
-  apt install -y "${PACKAGE}" > /dev/null 2>&1
+  apt install -y -o Dpkg::Options::=--force-confdef "${PACKAGE}" > /dev/null 2>&1
 done
 
 # Download and install dotfiles
