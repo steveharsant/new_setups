@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# v 1.1.0
+# v 1.1.1
 #
 # Set liniting rules
 # shellcheck disable=SC2059
@@ -83,7 +83,7 @@ apt update -qq
 printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq > /dev/null 2>&1
 
-PACKAGES=(arp-scan cifs-utils code cura git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
+PACKAGES=(arp-scan cifs-utils code cura docker git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
 for PACKAGE in "${PACKAGES[@]}"
 do
   printf "${INFO} Installing ${PACKAGE}\n"
