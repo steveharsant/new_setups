@@ -86,7 +86,7 @@ apt update -qq
 printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq > /dev/null 2>&1
 
-PACKAGES=(arp-scan cifs-utils code cura docker git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
+PACKAGES=(arp-scan cifs-utils code cura docker freerdp2-x11 git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
 for PACKAGE in "${PACKAGES[@]}"
 do
   printf "${INFO} Installing ${PACKAGE}\n"
