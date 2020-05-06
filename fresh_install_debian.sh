@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# v 1.1.1
+# v 1.2.0
 #
 # Set liniting rules
 # shellcheck disable=SC2059
@@ -36,7 +36,7 @@ fi
 # Check internet connection
 if ! nc -zw1 google.com 443; then
   printf "${FAIL} No active internet connection. Check connection and try again\n"
-  # exit 1
+  exit 1
 fi
 
 # Configure sudoers file
@@ -63,6 +63,9 @@ EXTERNAL_REPO[2,2]='deb [arch=amd64] https://packages.microsoft.com/repos/vscode
 EXTERNAL_REPO[3,0]='syncthing'
 EXTERNAL_REPO[3,1]='https://syncthing.net/release-key.txt'
 EXTERNAL_REPO[3,2]='deb https://apt.syncthing.net/ syncthing stable'
+EXTERNAL_REPO[4,0]='google-chrome-stable'
+EXTERNAL_REPO[4,1]='https://dl.google.com/linux/linux_signing_key.pub'
+EXTERNAL_REPO[4,2]='deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
 
 n=0
 SOURCES_PATH='/etc/apt/sources.list.d'
