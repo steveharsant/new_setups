@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# v 1.2.0
+# v 1.3.0
 #
 # Set liniting rules
 # shellcheck disable=SC2059
@@ -86,12 +86,24 @@ apt update -qq
 printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq > /dev/null 2>&1
 
-PACKAGES=(arp-scan cifs-utils code cura docker freerdp2-x11 git htop keepassxc qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
+PACKAGES=(arp-scan cifs-utils code cura docker freerdp2-x11 git htop keepassxc nautilus qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda tldr vim virt-manager vlc wine-stable)
 for PACKAGE in "${PACKAGES[@]}"
 do
   printf "${INFO} Installing ${PACKAGE}\n"
   apt install -y -o Dpkg::Options::=--force-confdef "${PACKAGE}" > /dev/null 2>&1
 done
+
+# Remove undesired applications
+REMOVE_PACKAGES=(nemo)
+for PACKAGE in "${REMOVE_PACKAGES[@]}"
+do
+  printf "${INFO} Removing ${PACKAGE}\n"
+  apt remove  -y "${PACKAGE}" > /dev/null 2>&1
+done
+
+# apt cleanup
+printf "${INFO} Running apt autoremove\n"
+apt autoremove -y > /dev/null 2>&1
 
 # Download and install dotfiles
 printf "${INFO} Installing dotfiles\n"
@@ -121,5 +133,9 @@ if [[ ! -f ${TILDA_CONFIG} ]]; then
   mkdir -p "${MYHOME}/.config/tilda/"
   curl -sS https://raw.githubusercontent.com/steveharsant/config_files/master/tilda_config > "${TILDA_CONFIG}"
 fi
+
+# Execute application configuration option commands:
+# Always set nautilus to use text location entry over breadcrumb buttons
+gsettings set org.gnome.nautilus.preferences always-use-location-entry true
 
 printf "Setup complete...\n"
