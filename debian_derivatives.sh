@@ -124,6 +124,7 @@ DOTFILES=(.bash_aliases .bash_customisations .bash_favourites .screenrc .vimrc)
 for FILE in "${DOTFILES[@]}"; do
   printf "${INFO} Downloading latest ${FILE} from github\n"
   curl -sS "${DOTFILES_URL}/${FILE}" > "${MYHOME}/${FILE}"
+  chown "${USERNAME}:${USERNAME}" "${MYHOME}/${FILE}"
 done
 
 printf "${HINT} Don't forget to source .bashrc\n"

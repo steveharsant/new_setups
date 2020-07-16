@@ -47,8 +47,8 @@ if ! grep -qF "${username} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
 fi
 
 # Install dotfiles
-if ! grep -Fq "${myhome}/.bash_customisations" "${myhome}/.bashrc"; then
-  cat >> "${myhome}/.bashrc" << EOH
+if ! grep -Fq "${myhome}/.bash_customisations" "${myhome}/.profile"; then
+  cat >> "${myhome}/.profile" << EOH
 # Add personal bash customisations, aliases and favourites
 if [[ -f "${HOME}/.bash_customisations" ]]; then source "${HOME}/.bash_customisations"; fi
 EOH
@@ -61,4 +61,5 @@ for file in $dotfiles; do
     chown "${username}:${username}" "${myhome}/${file}"
 done
 
-printf "Don't forget to source .bashrc\n"
+printf "Don't forget to source .profile\n"
+printf "You may get issues if the dotfiles are meant for bash, not ash!\n"
