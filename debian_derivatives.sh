@@ -47,6 +47,9 @@ fi
 # Configure Nautilis address bar
 sudo -u "${USERNAME}" dconf write /org/gnome/nautilus/preferences/always-use-location-entry true
 
+# Install apt-transport-https to allow repos to be populated correctly
+apt install apt-transport-https
+
 # Configure external repositories
 printf "${INFO} Adding external keys and repositories\n"
 
