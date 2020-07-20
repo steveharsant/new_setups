@@ -47,40 +47,25 @@ fi
 # Configure Nautilis address bar
 sudo -u "${USERNAME}" dconf write /org/gnome/nautilus/preferences/always-use-location-entry true
 
-# Install apt-transport-https to allow repos to be populated correctly
-apt install apt-transport-https
+# Install apt-transport-https and curl to allow repos to be populated correctly
+apt install -y -o Dpkg::Options::=--force-confdef apt-transport-https curl -y
 
 # Configure external repositories
 printf "${INFO} Adding external keys and repositories\n"
 
-declare -A EXTERNAL_REPO
-EXTERNAL_REPO[0,0]='spotify'
-EXTERNAL_REPO[0,1]='https://download.spotify.com/debian/pubkey.gpg'
-EXTERNAL_REPO[0,2]='http://repository.spotify.com stable non-free'
-EXTERNAL_REPO[1,0]='teamviewer'
-EXTERNAL_REPO[1,1]='https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc'
-EXTERNAL_REPO[1,2]='deb http://linux.teamviewer.com/deb stable main'
-EXTERNAL_REPO[2,0]='vscode'
-EXTERNAL_REPO[2,1]='https://packages.microsoft.com/keys/microsoft.asc'
-EXTERNAL_REPO[2,2]='deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
-EXTERNAL_REPO[3,0]='syncthing'
-EXTERNAL_REPO[3,1]='https://syncthing.net/release-key.txt'
-EXTERNAL_REPO[3,2]='deb https://apt.syncthing.net/ syncthing stable'
-EXTERNAL_REPO[4,0]='google-chrome-stable'
-EXTERNAL_REPO[4,1]='https://dl.google.com/linux/linux_signing_key.pub'
-EXTERNAL_REPO[4,2]='deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
+IFS=' '
+keys="https://download.spotify.com/debian/pubkey.gpg \
+      https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc \
+      https://packages.microsoft.com/keys/microsoft.asc"
 
-n=0
-SOURCES_PATH='/etc/apt/sources.list.d'
-
-until [[ "${n}" == 4 ]]; do
-  if [[ ! -f "${SOURCES_PATH}/${EXTERNAL_REPO[${n},0]}.list" ]]; then
-    printf "${INFO} Adding ${EXTERNAL_REPO[${n},0]} \n"
-    curl -sS "${EXTERNAL_REPO[${n},1]}" | apt-key add -
-    echo "${EXTERNAL_REPO[${n},3]}" > "${SOURCES_PATH}/${EXTERNAL_REPO[${n},0]}/.list"
-  fi
-  ((n++))
+for key in $keys
+do
+  curl -sS "$key" | apt-key add -
 done
+
+echo "deb http://repository.spotify.com stable non-free" | tee /etc/apt/sources.list.d/spotify.list
+echo "deb http://linux.teamviewer.com/deb stable main" | tee /etc/apt/sources.list.d/teamviewer.list
+echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" | tee /etc/apt/sources.list.d/vscode.list
 
 # Update, Upgrade and Install
 printf "${INFO} Running apt update\n"
