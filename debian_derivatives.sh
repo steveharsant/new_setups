@@ -96,6 +96,9 @@ done
 printf "${INFO} Running apt autoremove\n"
 apt autoremove -y > /dev/null 2>&1
 
+# Install python venv
+pip3 install virtualenv > /dev/null 2>&1
+
 # Download and install dotfiles
 printf "${INFO} Installing dotfiles\n"
 
