@@ -75,7 +75,7 @@ printf "${INFO} Running apt upgrade\n"
 apt upgrade -yqq > /dev/null 2>&1
 
 PACKAGES=(arp-scan cifs-utils code cura docker freerdp2-x11 git htop keepassxc \
-nautilus qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda \
+nautilus python3-pip qemu-kvm remmina shellcheck speedtest-cli spotify-client syncthing tilda \
 tldr vim virt-manager vlc wine-stable)
 
 for PACKAGE in "${PACKAGES[@]}"
