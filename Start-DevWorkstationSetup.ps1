@@ -13,7 +13,7 @@ refreshenv
 
 # Install Applications
 $packages = 'bitwarden', 'conemu', 'Cura', 'docker', 'egnyte-connect', 'Firefox', 'git', 'grep', 'heroku-cli', `
-            'microsoft-teams', 'nodejs', 'powertoys', 'vlc', 'vscode', 'teamviewer', 'terraform', 'zoom'
+            'microsoft-teams', 'nodejs', 'notion', 'powertoys', 'vlc', 'vscode', 'teamviewer', 'terraform', 'zoom'
 
 foreach ($package in $packages) {
     choco install $package -y
