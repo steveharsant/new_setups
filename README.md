@@ -6,6 +6,14 @@
 curl -sSL https://raw.githubusercontent.com/steveharsant/new_setups/master/debian_derivatives.sh | sudo bash
 ```
 
+## debian_derivatives_wsl.sh
+
+``` shell
+wget https://raw.githubusercontent.com/steveharsant/new_setups/master/debian_derivatives_wsl.sh
+chmod +x debian_derivatives_wsl.sh
+./debian_derivatives_wsl.sh
+```
+
 ## alpine_linux_wsl.sh
 
 ``` shell
