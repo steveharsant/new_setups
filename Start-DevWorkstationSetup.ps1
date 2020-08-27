@@ -1,3 +1,5 @@
+# v1.0.0
+
 # Check script is run as administrator
 if (! ([bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544"))) {
     Write-Output 'Not runnging as administrator. Exiting'
