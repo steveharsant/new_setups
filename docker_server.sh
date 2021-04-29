@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.0.1'
+version='1.1.0'
 # Functions
 print_help(){
   printf "Docker Server Setup and Container Deploy Script\n
@@ -23,16 +23,12 @@ print_help(){
       docker_server.sh
   OPTIONS:
       -a    space seperated list of additional packages to install via apt
-      -c    (Optional) Password used for any Docker containers using the \${PASSWORD} environment variable.
-            An 8 character password will be generated if one is not specified.
       -d    URL to a repository containing Docker Compose .yml files.
       -h    Print this help message
-      -p    git password or Personal Access Token
+      -p    (Optional) Password used for any Docker containers using the \${PASSWORD} environment variable.
+            An 8 character password will be generated if one is not specified.
       -q    Quiet execution. No output messages
-      -u    git username
-      -v    print version
-  TIP:
-      Docker Compose files have a .yml file extension. .yaml files will not work\n\n"
+      -v    print version \n\n"
   exit 0
 }
 
@@ -43,15 +39,13 @@ log(){
 }
 
 # Script arguements
-while getopts "a:c:d:hp:qu:v" OPT; do
+while getopts "a:d:hp:qv" OPT; do
   case "$OPT" in
     a) additional_pakages=$OPTARG;;
-    c) container_password=$OPTARG;;
     d) docker_compose_url=$OPTARG;;
     h) print_help;;
-    p) password=$OPTARG;;
+    p) container_password=$OPTARG;;
     q) quiet=1;;
-    u) username=$OPTARG;;
     v) printf "$version\n";;
     *) printf "Invalid argument passed -$OPT.\n" && exit 1 ;;
   esac
@@ -90,32 +84,15 @@ curl -sSL "https://raw.githubusercontent.com/docker/compose/1.29.1/contrib/compl
 # Download and execute Docker compose files in specified repository
 #
 
-# Set git user credentials if specified
-if [[ -n $username ]]; then
-  log 'Found credentials for repository'
-  credentials="$username:$password@"
-fi
-
-# Set default repository URL if one is not specified as script argument
+# Exit if no compose file is given
 if [[ -z $docker_compose_url ]]; then
-  docker_compose_url='https://github.com/steveharsant/Dockerfiles'
-  log "Using default Dockerfile repository: $docker_compose_url"
+  log 'No URL to Docker Compose .yml file. exiting'
+  exit 0
 fi
 
-# Remove https:// prefix and .git suffix if present, get the repository
-# name, then set the full url with credentials, if any
-docker_compose_url=${docker_compose_url#"https://"}
-docker_compose_url=${docker_compose_url%".git"}
-repository_name=${docker_compose_url##*/}
-docker_compose_url="https://$credentials$docker_compose_url.git"
-
-# create directory for downloaded repository
-mkdir -p /srv/scripts || :
+mkdir /srv/scripts
 cd /srv/scripts
-
-# Download repository and enter directory
-log 'Cloning Docker compose file repository'
-git clone "$docker_compose_url" --quiet
+curl -sSL "$docker_compose_url" -o compose.yml
 
 # Generate password if left blank
 if [[ -z $container_password ]]; then
@@ -124,12 +101,7 @@ if [[ -z $container_password ]]; then
 fi
 
 # Create temporary .env file
-echo "PASSWORD=$container_password" > /tmp/.env
+echo "PASSWORD=$container_password" > ./.env
 
-log 'Running each .yml file found within the repository'
-cd "./$repository_name"
-files=$(find . -name "*.yml")
-for file in $files
-do
-  docker-compose --env-file /tmp/.env up -f "$file" -d
-done
+log 'Running Docker compose'
+docker-compose up -d
