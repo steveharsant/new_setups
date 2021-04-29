@@ -26,8 +26,7 @@ print_help(){
       -a    space seperated list of additional packages to install via apt
       -d    URL to a repository containing Docker Compose .yml files.
       -h    Print this help message
-      -p    (Optional) Password used for any Docker containers using the \${PASSWORD} environment variable.
-            An 8 character password will be generated if one is not specified.
+      -e    Comma separated key=value pairs of environment variables. (e.g. USERNAME=steve,PASSWORD=secret1234)
       -q    Quiet execution. No output messages
       -v    print version \n\n"
   exit 0
@@ -40,12 +39,12 @@ log(){
 }
 
 # Script arguements
-while getopts "a:d:hp:qv" OPT; do
+while getopts "a:d:e:hqv" OPT; do
   case "$OPT" in
     a) additional_pakages=$OPTARG;;
     d) docker_compose_url=$OPTARG;;
+    e) environment_variables=$OPTARG;;
     h) print_help;;
-    p) container_password=$OPTARG;;
     q) quiet=1;;
     v) printf "$version\n";;
     *) printf "Invalid argument passed -$OPT.\n" && exit 1 ;;
@@ -95,14 +94,18 @@ mkdir /srv/scripts
 cd /srv/scripts
 curl -sSL "$docker_compose_url" -o compose.yml
 
-# Generate password if left blank
-if [[ -z $container_password ]]; then
-  container_password="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)"
-  printf "No password was specified. Generated password is: $container_password \n"
-fi
+# Add environment variables to .env file
+rm -f ./.env
+IFS=','
+for envvar in $environment_variables; do
+  echo "$envvar" >> ./.env
+done
 
 # Create temporary .env file
-echo "PASSWORD=$container_password" > ./.env
+echo "PASSWORD=$environment_variables" > ./.env
 
 log 'Running Docker compose'
 docker-compose up -d
+
+# CLean up .env file
+rm -f ./.env
