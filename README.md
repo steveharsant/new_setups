@@ -21,3 +21,11 @@ wget https://raw.githubusercontent.com/steveharsant/new_setups/master/alpine_lin
 chmod +x alpine_linux_wsl.sh
 ./alpine_linux_wsl.sh
 ```
+
+## docker_server.sh
+
+``` shell
+wget https://raw.githubusercontent.com/steveharsant/new_setups/master/docker_server.sh
+chmod +x docker_server.sh
+./docker_server.sh <<ARGUMENTS HERE>>
+```
