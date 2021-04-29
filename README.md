@@ -28,4 +28,7 @@ chmod +x alpine_linux_wsl.sh
 wget https://raw.githubusercontent.com/steveharsant/new_setups/master/docker_server.sh
 chmod +x docker_server.sh
 ./docker_server.sh <<ARGUMENTS HERE>>
+
+# Useful compose file
+https://raw.githubusercontent.com/steveharsant/Docker-Compose-Files/main/media_center_pipeline.yml
 ```
