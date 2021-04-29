@@ -12,6 +12,7 @@
 # shellcheck disable=SC2164
 
 version='1.1.0'
+
 # Functions
 print_help(){
   printf "Docker Server Setup and Container Deploy Script\n
