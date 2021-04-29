@@ -25,8 +25,8 @@ print_help(){
   OPTIONS:
       -a    space seperated list of additional packages to install via apt
       -d    URL to a repository containing Docker Compose .yml files.
-      -h    Print this help message
       -e    Comma separated key=value pairs of environment variables. (e.g. USERNAME=steve,PASSWORD=secret1234)
+      -h    Print this help message
       -q    Quiet execution. No output messages
       -v    print version \n\n"
   exit 0
