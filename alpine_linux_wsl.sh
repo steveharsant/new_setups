@@ -13,13 +13,13 @@ username=$(awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd 
 myhome="/home/${username}"
 
 # Check OS compatibility
-if [[ -z $(command -v apk) ]]; then
+if [ -z "$(command -v apk)" ]; then
   printf "apk package manager not found. Incompatible OS. exiting...\n"
   exit 1
 fi
 
 # Ensure script is running as root
-if [[ "${USER}" != 'root' ]]; then
+if [ "${USER}" != 'root' ]; then
   printf "This script requires root privileges. Re-run as root user\n"
   exit 1
 fi
