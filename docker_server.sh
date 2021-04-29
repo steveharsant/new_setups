@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.2.1'
+version='1.3.0'
 
 # Functions
 print_help(){
@@ -27,6 +27,8 @@ print_help(){
       -d    URL to a repository containing Docker Compose .yml files.
       -e    Comma separated key=value pairs of environment variables. (e.g. USERNAME=steve,PASSWORD=secret1234)
       -h    Print this help message
+      -k    Keep generated .env file. Useful when only wanting to rerun docker-compose up -d and not the entire script.
+            This will append any new environment variables specified with -e to the existing .env file
       -q    Quiet execution. No output messages
       -v    print version \n\n"
   exit 0
@@ -39,12 +41,13 @@ log(){
 }
 
 # Script arguements
-while getopts "a:d:e:hqv" OPT; do
+while getopts "a:d:e:hkqv" OPT; do
   case "$OPT" in
     a) additional_pakages=$OPTARG;;
     d) docker_compose_url=$OPTARG;;
     e) environment_variables=$OPTARG;;
     h) print_help;;
+    k) keep_env_file=1;;
     q) quiet=1;;
     v) printf "$version\n";;
     *) printf "Invalid argument passed -$OPT.\n" && exit 1 ;;
@@ -93,7 +96,10 @@ fi
 curl -sSL "$docker_compose_url" -o compose.yml
 
 # Add environment variables to .env file
-rm -f ./.env
+if [[ $keep_env_file != 1 ]]; then
+  rm -f ./.env
+fi
+
 IFS=','
 for envvar in $environment_variables; do
   echo "$envvar" >> ./.env
@@ -103,4 +109,6 @@ log 'Running Docker compose'
 docker-compose up -d
 
 # CLean up .env file
-rm -f ./.env
+if [[ $keep_env_file != 1 ]]; then
+  rm -f ./.env
+fi
