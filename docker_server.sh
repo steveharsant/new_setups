@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.0.0'
+version='1.0.1'
 # Functions
 print_help(){
   printf "Docker Server Setup and Container Deploy Script\n
@@ -128,4 +128,8 @@ echo "PASSWORD=$container_password" > /tmp/.env
 
 log 'Running each .yml file found within the repository'
 cd "./$repository_name"
-find . - '*.yml' -exec docker-compose --env-file /tmp/.env up -f "$(ls {})" -d \;
+files=$(find . -name "*.yml")
+for file in $files
+do
+  docker-compose --env-file /tmp/.env up -f "$file" -d
+done
