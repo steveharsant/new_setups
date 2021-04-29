@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.1.0'
+version='1.2.0'
 
 # Functions
 print_help(){
