@@ -25,7 +25,7 @@ print_help(){
   OPTIONS:
       -a    space seperated list of additional packages to install via apt
       -d    URL to a repository containing Docker Compose .yml files.
-      -e    Space separated key=value pairs of environment variables. (e.g. USERNAME=steve,PASSWORD=secret1234)
+      -e    Comma separated key=value pairs of environment variables. (e.g. USERNAME=steve,PASSWORD=secret1234)
       -h    Print this help message
       -q    Quiet execution. No output messages
       -v    print version \n\n"
@@ -94,7 +94,7 @@ curl -sSL "$docker_compose_url" -o compose.yml
 
 # Add environment variables to .env file
 rm -f ./.env
-IFS=' '
+IFS=','
 for envvar in $environment_variables; do
   echo "$envvar" >> ./.env
 done
