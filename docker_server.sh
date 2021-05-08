@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.3.0'
+version='1.3.1'
 
 # Functions
 print_help(){
@@ -70,7 +70,7 @@ apt remove docker docker-engine docker.io containerd runc > /dev/null 2>&1
 packages="apt-transport-https ca-certificates curl git gnupg htop jq lsb-release speedtest-cli vim $additional_pakages"
 
 log "Installing the following packages: $packages"
-apt install -y -o Dpkg::Options::=--force-confdef "$packages" > /dev/null 2>&1
+apt install -y -o Dpkg::Options::=--force-confdef $packages > /dev/null 2>&1
 
 # Install Docker compose
 log 'Installing Docker compose'
