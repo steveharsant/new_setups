@@ -11,7 +11,7 @@
 # shellcheck disable=SC2086
 # shellcheck disable=SC2164
 
-version='1.3.1'
+version='1.3.2'
 
 # Functions
 print_help(){
@@ -71,6 +71,19 @@ packages="apt-transport-https ca-certificates curl git gnupg htop jq lsb-release
 
 log "Installing the following packages: $packages"
 apt install -y -o Dpkg::Options::=--force-confdef $packages > /dev/null 2>&1
+
+# Install Docker
+log 'Adding Docker GPG key'
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+log 'Adding Docker Stable release repository to apt'
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+log 'Installing Docker'
+apt update -qq
+apt install docker-ce docker-ce-cli containerd.io -yqq -o Dpkg::Options::=--force-confdef > /dev/null 2>&1
 
 # Install Docker compose
 log 'Installing Docker compose'
