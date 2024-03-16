@@ -24,3 +24,29 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 # Install alpine linux distro
 choco install -y
+
+# Install Ubuntu Mono fonts
+Invoke-WebRequest `
+    -Get `
+    -Uri 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/UbuntuMono.zip' `
+    -OutFile "$env:TEMP/UbuntuMono.zip"
+
+Expand-Archive `
+    -Path "$env:TEMP/UbuntuMono.zip" `
+    -DestinationPath "$env:TEMP/UbuntuMono"
+
+$fonts = Get-ChildItem `
+    -Path "$env:TEMP/UbuntuMono\*" `
+    -Name '*.ttf'
+
+foreach ($font in $fonts) {
+    Write-Host 'Installing font -' "$env:TEMP/UbuntuMono\$font"
+    Copy-Item `
+        -Path $font `
+        -DestinationPath 'C:\Windows\Fonts'
+
+    New-ItemProperty -Name $font `
+        -Path 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts' `
+        -PropertyType string `
+        -Value $font
+}
