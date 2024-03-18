@@ -14,7 +14,7 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://cho
 refreshenv
 
 # Install Applications
-$packages = 'firefox lepton bitwarden conemu docker git grep powertoys vlc vscode ferdium spotify python 7zip tailscale powershell-core'
+$packages = '7zip bitwarden conemu docker ferdium firefox git grammarly-for-windows grep lepton powershell-core powertoys python spotify tailscale vlc vscode'
 
 choco install $packages -y
 
