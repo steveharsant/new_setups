@@ -1,4 +1,4 @@
-# v1.0.0
+# v1.2.0
 
 # Check script is run as administrator
 if (! ([bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match 'S-1-5-32-544'))) {
@@ -14,7 +14,7 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://cho
 refreshenv
 
 # Install Applications
-$packages = '7zip bitwarden conemu docker ferdium firefox git grammarly-for-windows grep lepton powershell-core powertoys python spotify tailscale vlc vscode'
+$packages = '7zip bitwarden conemu docker-desktop ferdium firefox git grammarly-for-windows grep lepton powershell-core powertoys python spotify tailscale vlc vscode'
 
 choco install $packages -y
 
@@ -22,8 +22,8 @@ choco install $packages -y
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
-# Install alpine linux distro
-choco install -y
+# Install ubuntu
+wsl --install
 
 # Install Ubuntu Mono fonts
 Invoke-WebRequest `
@@ -50,3 +50,18 @@ foreach ($font in $fonts) {
         -PropertyType string `
         -Value $font
 }
+
+# Create common directories
+$directories = @( '.ssh', 'applications', 'development' )
+Foreach ($directory in $directories) {
+    New-Item -ItemType Directory -Path "C:\Users\$env:USERNAME\$directory"
+}
+
+# Clone shell customisation repos
+$repos = @( 'dotfiles', 'powershell_prompt' )
+foreach ($repo in $repos) {
+    git clone "https://github.com/steveharsant/$repo.git" "C:\Users\$env:USERNAME\development\$repo"
+}
+
+# Run install.ps1 script to setup customisation
+& "C:\Users\$env:USERNAME\development\dotfiles\install.ps1"
